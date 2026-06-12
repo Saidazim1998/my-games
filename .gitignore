@@ -5,9 +5,10 @@ releases/
 .vs/
 
 # Launcher runtime artefaktlari (test paytida bin ichida paydo bo'ladi)
+# Eslatma: ildizdagi covers/ repo'da TURADI (o'yin muqovalari) — runtime kesh
+# papkalari bin/ va dist-test/ orqali allaqachon ignore qilinadi
 Games/
 temp/
-covers/
 installed.json
 config.json
 testdata/*.zip
