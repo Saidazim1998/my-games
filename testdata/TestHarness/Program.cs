@@ -36,7 +36,7 @@ var game = catalog.Games[0];
 await InstallService.InstallAsync(game, db, progress, _ => { }, CancellationToken.None);
 string exeInstalled = Path.Combine(AppPaths.GameDir("dummy"), "DummyGame.exe");
 Check("Games\\dummy\\DummyGame.exe mavjud", File.Exists(exeInstalled));
-Check("installed.json = 1.0.0", InstalledDb.Load().Get("dummy") == "1.0.0");
+Check($"installed.json = {game.Version}", InstalledDb.Load().Get("dummy") == game.Version);
 Check("temp tozalangan", !Directory.Exists(AppPaths.GameTempDir("dummy")));
 Check("debug papka zip'ga kirmagan",
     !Directory.Exists(Path.Combine(AppPaths.GameDir("dummy"), "DummyGame_BurstDebugInformation_DoNotShip")));
@@ -59,18 +59,20 @@ try { await InstallService.InstallAsync(badHash, db, progress, _ => { }, Cancell
 catch (InvalidOperationException) { hashThrew = true; }
 Check("buzuq sha256 — o'rnatish rad etildi", hashThrew);
 Check("eski nusxa tegmagan (exe joyida)", File.Exists(exeInstalled));
-Check("versiya hali ham 1.0.0", InstalledDb.Load().Get("dummy") == "1.0.0");
+Check($"versiya hali ham {game.Version}", InstalledDb.Load().Get("dummy") == game.Version);
 
-// --- 5. Yangilash 1.0.1 (xuddi shu zip, yangi versiya raqami)
-string zip101 = Path.Combine(repoRoot, "releases", "dummy-1.0.1.zip");
-File.Copy(game.ZipUrl, zip101, overwrite: true);
+// --- 5. Yangilash: katalogdagi versiyadan bittaga katta (xuddi shu zip, yangi raqam)
+var cur = Version.Parse(game.Version);
+string nextVer = new Version(cur.Major, cur.Minor, Math.Max(cur.Build, 0) + 1).ToString();
+string nextZip = Path.Combine(repoRoot, "releases", $"dummy-harness-{nextVer}.zip");
+File.Copy(game.ZipUrl, nextZip, overwrite: true);
 var update = new CatalogGame
 {
-    Id = "dummy", Name = game.Name, Version = "1.0.1",
-    ZipUrl = zip101, Sha256 = game.Sha256, Exe = game.Exe,
+    Id = "dummy", Name = game.Name, Version = nextVer,
+    ZipUrl = nextZip, Sha256 = game.Sha256, Exe = game.Exe,
 };
 await InstallService.InstallAsync(update, db, progress, _ => { }, CancellationToken.None);
-Check("1.0.1 ga yangilandi", InstalledDb.Load().Get("dummy") == "1.0.1");
+Check($"{nextVer} ga yangilandi", InstalledDb.Load().Get("dummy") == nextVer);
 
 // --- 6. Qulflangan fayl: IOException + o'yin joyida qolishi
 using (File.OpenRead(exeInstalled))

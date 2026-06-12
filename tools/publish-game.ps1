@@ -20,6 +20,7 @@ param(
     [string]$Owner = "OWNER",
     [string]$Repo = "REPO",
     [string]$Changelog = "",
+    [string]$Description = "",
     [string]$CoverUrl = "",
     [string]$OutDir = "$PSScriptRoot\..\releases",
     [switch]$LocalZip
@@ -58,15 +59,16 @@ else { $zipUrl = "https://github.com/$Owner/$Repo/releases/download/$tag/$zipNam
 $entry = [ordered]@{
     id = $GameId; name = $GameName; version = $Version
     zipUrl = $zipUrl; sha256 = $hash; exe = $ExeName
-    coverUrl = $CoverUrl; changelog = $Changelog
+    coverUrl = $CoverUrl; changelog = $Changelog; description = $Description
 }
 
 if ($GamesJsonPath) {
     if (Test-Path $GamesJsonPath) {
         $catalog = Get-Content $GamesJsonPath -Raw -Encoding UTF8 | ConvertFrom-Json
         $existing = $catalog.games | Where-Object { $_.id -eq $GameId }
-        # coverUrl berilmagan bo'lsa eskisini saqlab qolamiz
+        # coverUrl/description berilmagan bo'lsa eskisini saqlab qolamiz
         if ($existing -and -not $CoverUrl -and $existing.coverUrl) { $entry.coverUrl = $existing.coverUrl }
+        if ($existing -and -not $Description -and $existing.description) { $entry.description = $existing.description }
         $games = @($catalog.games | Where-Object { $_.id -ne $GameId })
     } else {
         $games = @()

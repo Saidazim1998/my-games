@@ -16,4 +16,6 @@ public class CatalogGame
     public string Exe { get; set; } = "";
     public string? CoverUrl { get; set; }
     public string? Changelog { get; set; }
+    /// <summary>O'yin haqida qisqacha ma'lumot — detal panelda ko'rsatiladi.</summary>
+    public string? Description { get; set; }
 }

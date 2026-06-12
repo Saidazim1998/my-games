@@ -9,7 +9,7 @@ namespace Launcher.ViewModels;
 public enum GameState { NotInstalled, UpdateAvailable, Installed, Busy }
 
 /// <summary>
-/// Bitta o'yin kartasining holat mashinasi. Barcha property o'zgarishlari UI threadda
+/// Bitta o'yinning holat mashinasi. Barcha property o'zgarishlari UI threadda
 /// bo'ladi: buyruqlar UI threaddan await qilinadi, Progress&lt;T&gt; ham UI threadda yaratiladi.
 /// </summary>
 public class GameViewModel : ObservableObject
@@ -26,11 +26,13 @@ public class GameViewModel : ObservableObject
         private set
         {
             if (!Set(ref _state, value)) return;
-            OnPropertyChanged(nameof(ActionLabel));
+            OnPropertyChanged(nameof(MainButtonLabel));
+            OnPropertyChanged(nameof(ListStatusText));
             OnPropertyChanged(nameof(VersionText));
             OnPropertyChanged(nameof(ProgressVisibility));
             OnPropertyChanged(nameof(CancelVisibility));
-            PrimaryCommand.RaiseCanExecuteChanged();
+            MainCommand.RaiseCanExecuteChanged();
+            UpdateCommand.RaiseCanExecuteChanged();
             UninstallCommand.RaiseCanExecuteChanged();
         }
     }
@@ -43,10 +45,18 @@ public class GameViewModel : ObservableObject
     }
 
     private double _progress;
-    public double Progress { get => _progress; private set => Set(ref _progress, value); }
+    public double Progress
+    {
+        get => _progress;
+        private set { if (Set(ref _progress, value)) OnPropertyChanged(nameof(ProgressText)); }
+    }
 
     private bool _isIndeterminate;
-    public bool IsIndeterminate { get => _isIndeterminate; private set => Set(ref _isIndeterminate, value); }
+    public bool IsIndeterminate
+    {
+        get => _isIndeterminate;
+        private set { if (Set(ref _isIndeterminate, value)) OnPropertyChanged(nameof(ProgressText)); }
+    }
 
     private string _statusText = "";
     public string StatusText { get => _statusText; private set => Set(ref _statusText, value); }
@@ -54,24 +64,37 @@ public class GameViewModel : ObservableObject
     private ImageSource _cover = CoverImageService.Placeholder;
     public ImageSource Cover { get => _cover; private set => Set(ref _cover, value); }
 
-    public string ActionLabel => State switch
+    /// <summary>Asosiy tugma: o'rnatilmagan bo'lsa O'RNATISH, aks holda O'YNASH.</summary>
+    public string MainButtonLabel => State switch
     {
         GameState.NotInstalled => "O'RNATISH",
-        GameState.UpdateAvailable => "YANGILASH",
-        GameState.Installed => "O'YNASH",
-        _ => "KUTING...",
+        GameState.Busy => "KUTING...",
+        _ => "▶  O'YNASH",
+    };
+
+    /// <summary>Chap ro'yxatdagi kichik holat yozuvi.</summary>
+    public string ListStatusText => State switch
+    {
+        GameState.NotInstalled => "O'rnatilmagan",
+        GameState.UpdateAvailable => "Yangilanish bor!",
+        GameState.Busy => "Yuklanmoqda...",
+        _ => "O'rnatilgan",
     };
 
     public string VersionText => InstalledVersion == null
         ? $"Versiya: {Game.Version}"
         : VersionUtil.IsNewer(Game.Version, InstalledVersion)
-            ? $"O'rnatilgan: {InstalledVersion} → Yangi: {Game.Version}"
+            ? $"O'rnatilgan: {InstalledVersion}  →  Yangi: {Game.Version}"
             : $"O'rnatilgan: {InstalledVersion}";
+
+    public string ProgressText => IsIndeterminate ? "..." : $"{Progress:0}%";
 
     public Visibility ProgressVisibility => State == GameState.Busy ? Visibility.Visible : Visibility.Collapsed;
     public Visibility CancelVisibility => ProgressVisibility;
 
-    public RelayCommand PrimaryCommand { get; }
+    public RelayCommand MainCommand { get; }
+    /// <summary>Faqat yangilanish mavjud bo'lganda yoqiladi; tugagach yana o'chadi.</summary>
+    public RelayCommand UpdateCommand { get; }
     public RelayCommand UninstallCommand { get; }
     public RelayCommand CancelCommand { get; }
     public RelayCommand OpenFolderCommand { get; }
@@ -80,7 +103,9 @@ public class GameViewModel : ObservableObject
     {
         Game = game;
         _db = db;
-        PrimaryCommand = new RelayCommand(async () => await OnPrimaryAsync(), () => State != GameState.Busy);
+        MainCommand = new RelayCommand(async () => await OnMainAsync(), () => State != GameState.Busy);
+        UpdateCommand = new RelayCommand(async () => await InstallAsync(),
+            () => State == GameState.UpdateAvailable);
         UninstallCommand = new RelayCommand(Uninstall,
             () => State is GameState.Installed or GameState.UpdateAvailable);
         CancelCommand = new RelayCommand(() => _cts?.Cancel());
@@ -97,18 +122,15 @@ public class GameViewModel : ObservableObject
             : GameState.Installed;
     }
 
-    private async Task OnPrimaryAsync()
+    private async Task OnMainAsync()
     {
-        if (State == GameState.Installed)
-        {
-            Play();
-            return;
-        }
-        await InstallAsync();
+        if (State == GameState.NotInstalled) await InstallAsync();
+        else Play();
     }
 
     private async Task InstallAsync()
     {
+        if (State == GameState.Busy) return;
         State = GameState.Busy;
         StatusText = "";
         _cts = new CancellationTokenSource();
