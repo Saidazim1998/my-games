@@ -1,0 +1,15 @@
+bin/
+obj/
+releases/
+*.user
+.vs/
+
+# Launcher runtime artefaktlari (test paytida bin ichida paydo bo'ladi)
+Games/
+temp/
+covers/
+installed.json
+config.json
+testdata/*.zip
+testdata/games.local.json
+testdata/DummyGame/publish/
