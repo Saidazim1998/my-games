@@ -1,4 +1,4 @@
-# Launcherni bitta self-contained exe ga publish qiladi (foydalanuvchiga .NET kerak bo'lmaydi)
+﻿# Launcherni bitta self-contained exe ga publish qiladi (foydalanuvchiga .NET kerak bo'lmaydi)
 # PublishTrimmed QO'ShILMASIN — WPF .NET 6 da trimming ishlamaydi
 $ErrorActionPreference = "Stop"
 dotnet publish "$PSScriptRoot\..\src\Launcher" -c Release -r win-x64 --self-contained true `

@@ -13,3 +13,4 @@ config.json
 testdata/*.zip
 testdata/games.local.json
 testdata/DummyGame/publish/
+dist-test/

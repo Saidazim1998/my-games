@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Unity build -> release zip + SHA-256 + games.json yozuvi.
 
