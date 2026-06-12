@@ -3,12 +3,12 @@
                   {
                       "id":  "racing-game",
                       "name":  "Racing Game",
-                      "version":  "1.0.0",
-                      "zipUrl":  "https://github.com/Saidazim1998/my-games/releases/download/racing-game-v1.0.0/racing-game-1.0.0.zip",
-                      "sha256":  "E0E4BAABB1889D540379AA730BD057301F6995F304E6ECBA62B9E93300AA14BA",
+                      "version":  "1.1.0",
+                      "zipUrl":  "https://github.com/Saidazim1998/my-games/releases/download/racing-game-v1.1.0/racing-game-1.1.0.zip",
+                      "sha256":  "42B04A2872FE0B0E8C5819B24D60BD1853CFD74245C7156EF48CF9A1BC5D823C",
                       "exe":  "Racing Game.exe",
                       "coverUrl":  "https://raw.githubusercontent.com/Saidazim1998/my-games/main/covers/racing-game.png",
-                      "changelog":  "Birinchi versiya",
+                      "changelog":  "Yangi versiya 1.1.0",
                       "description":  "Tezkor poyga o\u0027yini. Raqiblaringizni quvib o\u0027tib, trassada birinchi bo\u0027lib marraga yeting!"
                   }
               ]
