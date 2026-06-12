@@ -4,9 +4,8 @@ namespace Launcher.Models;
 
 public class LauncherConfig
 {
-    // GitHub repo tayyor bo'lganda shu URL o'zgartiriladi (config.json da, kod emas)
     public string CatalogUrl { get; set; } =
-        "https://raw.githubusercontent.com/OWNER/REPO/main/games.json";
+        "https://raw.githubusercontent.com/Saidazim1998/my-games/main/games.json";
 
     public static LauncherConfig Load()
     {
