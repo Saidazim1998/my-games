@@ -3,9 +3,7 @@
   Unity build -> release zip + SHA-256 + games.json yozuvi.
 
 .EXAMPLE
-  .\publish-game.ps1 -BuildDir "E:\Builds\WeldingSim" -GameId welding-sim `
-      -GameName "VR Welding Simulator" -Version 1.2.0 -ExeName "WeldingSim.exe" `
-      -GamesJsonPath ..\games.json -Owner myuser -Repo my-games -Changelog "Yangi hummer"
+  .\publish-game.ps1 -BuildDir 'E:\UnityProjects\Builds\RacingGame' -GameId racing-game -GameName 'Racing Game' -Version 1.1.1 -ExeName 'Racing Game.exe' -GamesJsonPath .\games.json -Owner Saidazim1998 -Repo my-games -Changelog "Version 1.1.0 ga o'zgardi"
 
   # Lokal test (GitHub'siz): -LocalZip bilan zipUrl lokal fayl yo'li bo'ladi
   .\publish-game.ps1 -BuildDir ... -LocalZip -GamesJsonPath ..\testdata\games.local.json

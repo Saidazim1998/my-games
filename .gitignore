@@ -14,4 +14,10 @@ config.json
 testdata/*.zip
 testdata/games.local.json
 testdata/DummyGame/publish/
+testdata/dummy-banner.png
 dist-test/
+publisher-config.json
+
+# Publish qilingan exe'lar (repo papkasida turadi, lekin git'ga kirmaydi — kattaligi uchun)
+/Launcher.exe
+/Publisher.exe

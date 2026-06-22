@@ -1,0 +1,154 @@
+<Window x:Class="Publisher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Release Publisher" Height="800" Width="900" MinHeight="600" MinWidth="760"
+        Background="#1b2838" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style TargetType="TextBlock" x:Key="Label">
+            <Setter Property="Foreground" Value="#c5cbd1"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,10,0,4"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#11151b"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#39414d"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="CaretBrush" Value="White"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <Style TargetType="Button" x:Key="Small">
+            <Setter Property="Background" Value="#39414d"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="22,18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="200"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="🚀 Release Publisher" Foreground="White" FontSize="22" FontWeight="Bold"/>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
+            <StackPanel>
+                <TextBlock Text="O'yin" Style="{StaticResource Label}"/>
+                <ComboBox x:Name="GameSelect" SelectionChanged="GameSelect_Changed"/>
+
+                <TextBlock Text="Build papkasi (Unity build qilgan joy)" Style="{StaticResource Label}"/>
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="Tanlash..." Style="{StaticResource Small}"
+                            Margin="8,0,0,0" Click="PickBuild_Click"/>
+                    <TextBox x:Name="BuildDir" TextChanged="BuildDir_Changed"/>
+                </DockPanel>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="O'yin ID (o'zgarmaydi, masalan: racing-game)" Style="{StaticResource Label}"/>
+                        <TextBox x:Name="GameId"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="O'yin nomi (launcherda ko'rinadi)" Style="{StaticResource Label}"/>
+                        <TextBox x:Name="GameName"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Versiya (har safar oshiring: 1.0.1)" Style="{StaticResource Label}"/>
+                        <TextBox x:Name="Version"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Exe fayl nomi" Style="{StaticResource Label}"/>
+                        <TextBox x:Name="ExeName"/>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="Muqova rasm (ixtiyoriy — bo'sh qoldirsangiz eskisi qoladi)" Style="{StaticResource Label}"/>
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="Tanlash..." Style="{StaticResource Small}"
+                            Margin="8,0,0,0" Click="PickCover_Click"/>
+                    <TextBox x:Name="CoverFile"/>
+                </DockPanel>
+
+                <TextBlock Text="Nima o'zgardi (changelog)" Style="{StaticResource Label}"/>
+                <TextBox x:Name="Changelog" AcceptsReturn="True" TextWrapping="Wrap" Height="48"
+                         VerticalScrollBarVisibility="Auto"/>
+
+                <TextBlock Text="O'yin haqida ma'lumot (ixtiyoriy — bo'sh qoldirsangiz eskisi qoladi)" Style="{StaticResource Label}"/>
+                <TextBox x:Name="Description" AcceptsReturn="True" TextWrapping="Wrap" Height="60"
+                         VerticalScrollBarVisibility="Auto"/>
+
+                <CheckBox x:Name="PublishGitHub" Content="  GitHub'ga yuborish (belgini olib tashlasangiz faqat lokal zip yasaladi)"
+                          IsChecked="True" Foreground="#c5cbd1" FontSize="13" Margin="0,16,0,0"/>
+
+                <Expander Header="Sozlamalar (repo papkasi / gh.exe yo'li)" Foreground="#8f98a0" Margin="0,14,0,0">
+                    <StackPanel Margin="0,8,0,0">
+                        <TextBlock Text="Repo papkasi (games.json shu yerda)" Style="{StaticResource Label}"/>
+                        <TextBox x:Name="RepoRoot"/>
+                        <TextBlock Text="gh.exe yo'li" Style="{StaticResource Label}"/>
+                        <TextBox x:Name="GhPath"/>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Button x:Name="ReleaseBtn" Grid.Row="2" Content="🚀 RELEASE QIL" Click="Release_Click"
+                Foreground="White" FontWeight="Bold" FontSize="16" BorderThickness="0"
+                Cursor="Hand" Height="50" Margin="0,14,0,10">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="b" Background="#5ba32b" CornerRadius="5">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="b" Property="Background" Value="#6cbe33"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="b" Property="Background" Value="#3a4654"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
+        <Border Grid.Row="3" Background="#0d1117" CornerRadius="5">
+            <ScrollViewer x:Name="LogScroll" VerticalScrollBarVisibility="Auto" Padding="10,8">
+                <TextBlock x:Name="LogText" Foreground="#9be29b" FontFamily="Consolas" FontSize="12"
+                           TextWrapping="Wrap"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>
