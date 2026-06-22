@@ -14,11 +14,12 @@ public static class CoverImageService
     {
         try
         {
-            string cache = AppPaths.CoverFile(game.Id);
+            string cache = AppPaths.CoverFile(game.Id, game.Version);
             if (!File.Exists(cache))
             {
                 if (string.IsNullOrWhiteSpace(game.CoverUrl)) return Placeholder;
                 Directory.CreateDirectory(AppPaths.CoversDir);
+                PurgeOldCovers(game.Id, keep: Path.GetFileName(cache)); // eski versiya keshlarini o'chir
                 byte[] bytes;
                 if (game.CoverUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 {
@@ -37,6 +38,21 @@ public static class CoverImageService
         {
             return Placeholder;
         }
+    }
+
+    // Shu o'yinning eski muqova kesh fayllarini o'chiradi (joriy versiyanikidan tashqari),
+    // shu jumladan eski formatdagi <id>.img faylni ham — kesh shishib ketmasligi uchun
+    private static void PurgeOldCovers(string id, string keep)
+    {
+        try
+        {
+            foreach (var f in Directory.EnumerateFiles(AppPaths.CoversDir, id + "__*.img"))
+                if (!string.Equals(Path.GetFileName(f), keep, StringComparison.OrdinalIgnoreCase))
+                    File.Delete(f);
+            string legacy = Path.Combine(AppPaths.CoversDir, id + ".img");
+            if (File.Exists(legacy)) File.Delete(legacy);
+        }
+        catch { /* best-effort */ }
     }
 
     // OnLoad — fayl handle'ini darhol bo'shatadi; Freeze — boshqa threadda yaratilgan

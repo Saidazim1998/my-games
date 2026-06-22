@@ -18,5 +18,15 @@ public static class AppPaths
 
     public static string GameDir(string id) => Path.Combine(GamesDir, id);
     public static string GameTempDir(string id) => Path.Combine(TempDir, id);
-    public static string CoverFile(string id) => Path.Combine(CoversDir, id + ".img");
+
+    // Muqova keshi versiyaga bog'langan: yangi release (yangi versiya) -> yangi kesh fayli,
+    // ya'ni banner o'zgarsa launcher uni qayta yuklab oladi. <id>__<version>.img
+    public static string CoverFile(string id, string version) =>
+        Path.Combine(CoversDir, $"{id}__{Sanitize(version)}.img");
+
+    private static string Sanitize(string s)
+    {
+        foreach (var c in Path.GetInvalidFileNameChars()) s = s.Replace(c, '_');
+        return s;
+    }
 }
